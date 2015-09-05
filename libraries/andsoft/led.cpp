@@ -3,11 +3,12 @@
 namespace AndSoft
 {
 
-  LED::LED(const uint8_t pin)
+  LED::LED(const uint8_t pin, const uint8_t high)
     : myPIN(pin)
+    , myHIGH(high)
     , myPeriods(NULL)
     , mySize(0)
-    , myFirst(LOW)
+    , myIsFirstHigh(false)
     , myActive(false)
   {
   }
@@ -28,13 +29,13 @@ namespace AndSoft
 	if (myPosition == mySize)
 	{
 	  myPosition = 0;
-	  myDigital = myFirst;
+	  myDigital = myIsFirstHigh ? myHIGH : 0;
 	}
 	else
 	{
-	  myDigital = myDigital == HIGH ? LOW : HIGH;
+	  myDigital = myDigital ? 0 : myHIGH;
 	}
-	digitalWrite(myPIN, myDigital);
+	analogWrite(myPIN, myDigital);
 	myNextWakeupTime += myPeriods[myPosition];
       }
     }
@@ -43,29 +44,40 @@ namespace AndSoft
   void LED::on()
   {
     myActive = false;
-    digitalWrite(myPIN, HIGH);
+    analogWrite(myPIN, myHIGH);
   }
 
   void LED::off()
   {
     myActive = false;
-    digitalWrite(myPIN, LOW);
+    analogWrite(myPIN, 0);
   }
 
-  void LED::flash(unsigned long const * periods, const int size, const uint8_t first)
+  void LED::setHigh(const uint8_t high)
   {
+    myHIGH = high;
+  }
+
+  void LED::flash(unsigned long const * periods, const int size, const boolean isFirstHigh)
+  {
+    if (myActive && periods == myPeriods && size == mySize && myIsFirstHigh == isFirstHigh)
+    {
+      // nothing to do
+      return;
+    }
+
     myActive = size > 1;
-    digitalWrite(myPIN, first);
+    myDigital = isFirstHigh ? myHIGH : 0;
+    analogWrite(myPIN, myDigital);
 
     if (myActive)
     {
       myPeriods = periods;
       mySize = size;
-      myFirst = first;
+      myIsFirstHigh = isFirstHigh;
 
       const unsigned long now = millis();
       myPosition = 0;
-      myDigital = first;
 
       myNextWakeupTime = now + myPeriods[myPosition];
     }

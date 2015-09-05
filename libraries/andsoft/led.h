@@ -8,7 +8,7 @@ namespace AndSoft
   class LED
   {
   public:
-    LED(const uint8_t pin);
+    LED(const uint8_t pin, const uint8_t high = 255);
 
     void setup();
 
@@ -18,14 +18,18 @@ namespace AndSoft
 
     void off();
 
-    void flash(unsigned long const * periods, const int size, const uint8_t first);
+    void flash(unsigned long const * periods, const int size, const bool isFirstHigh);
+
+    void setHigh(const uint8_t high);
 
   private:
 
     const uint8_t myPIN;
+    uint8_t myHIGH;
+
     unsigned long const * myPeriods;
     int mySize;
-    uint8_t myFirst;
+    uint8_t myIsFirstHigh;
 
     bool myActive;
     int myPosition;

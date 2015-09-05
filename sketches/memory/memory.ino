@@ -96,7 +96,7 @@ void enter_idle()
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
-    leds[i]->flash(intervals, 2, HIGH);
+    leds[i]->flash(intervals, 2, true);
   }
 
   state = STATE_IDLE;
@@ -260,7 +260,7 @@ void enter_error()
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
-    leds[i]->flash(intervals, 2, i < 2 ? HIGH : LOW);
+    leds[i]->flash(intervals, 2, i < 2);
   }
   state = STATE_ERROR;
 }
@@ -283,7 +283,7 @@ void enter_next()
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
-    leds[i]->flash(intervals, 2, i & 1 ? HIGH : LOW);
+    leds[i]->flash(intervals, 2, i & 1);
   }
   state = STATE_NEXT;
 }
@@ -305,7 +305,7 @@ void enter_win()
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
-    leds[i]->flash(intervals, 2, (i == 0 || i == 3) ? HIGH : LOW);
+    leds[i]->flash(intervals, 2, (i == 0 || i == 3));
   }
   state = STATE_WIN;
 }
